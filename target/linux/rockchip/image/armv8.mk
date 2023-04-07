@@ -8,7 +8,7 @@ define Device/friendlyarm_nanopi-r2c
   SOC := rk3328
   UBOOT_DEVICE_NAME := nanopi-r2c-rk3328
   IMAGE/sysupgrade.img.gz := boot-common | boot-script nanopi-r2s | pine64-bin | gzip | append-metadata
-  DEVICE_PACKAGES := kmod-usb-net-rtl8152
+  DEVICE_PACKAGES := kmod-usb-net-rtl8152-vendor
 endef
 TARGET_DEVICES += friendlyarm_nanopi-r2c
 
