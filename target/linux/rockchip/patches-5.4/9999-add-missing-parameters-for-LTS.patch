@@ -1,7 +1,7 @@
 Index: b/Documentation/devicetree/bindings/soc/rockchip/grf.txt
 ===================================================================
---- a/Documentation/devicetree/bindings/soc/rockchip/grf.txt	2023-03-13 17:18:25.000000000 +0800
-+++ b/Documentation/devicetree/bindings/soc/rockchip/grf.txt	2023-03-16 12:19:23.059470189 +0800
+--- a/Documentation/devicetree/bindings/soc/rockchip/grf.txt
++++ b/Documentation/devicetree/bindings/soc/rockchip/grf.txt
 @@ -31,6 +31,8 @@ Required Properties:
     - "rockchip,rk3288-sgrf", "syscon": for rk3288
  - compatible: USB2PHYGRF should be one of the followings
@@ -13,8 +13,8 @@ Index: b/Documentation/devicetree/bindings/soc/rockchip/grf.txt
  - reg: physical base address of the controller and length of memory mapped
 Index: b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s.dts
 ===================================================================
---- a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s.dts	2023-03-16 11:51:41.804313109 +0800
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s.dts	2023-03-16 11:58:13.659245659 +0800
+--- a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s.dts
 @@ -486,3 +486,16 @@
  		realtek,led-data = <0x87>;
  	};
@@ -32,39 +32,11 @@ Index: b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s.dts
 +&u3phy_pipe {
 +	status = "okay";
 +};
-Index: b/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus-lts.dts
-===================================================================
---- a/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus-lts.dts	2023-03-16 11:51:41.508311373 +0800
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus-lts.dts	2023-03-16 11:59:08.012553656 +0800
-@@ -44,6 +44,7 @@
- 			pinctrl-names = "default";
- 			reset-assert-us = <15000>;
- 			reset-deassert-us = <50000>;
-+			keep-clkout-on;
- 			reset-gpios = <&gpio1 RK_PC2 GPIO_ACTIVE_LOW>;
- 		};
- 	};
 Index: b/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus.dts
 ===================================================================
---- a/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus.dts	2023-03-16 11:51:41.436310951 +0800
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus.dts	2023-03-16 12:01:32.826395165 +0800
-@@ -4,6 +4,15 @@
- / {
- 	model = "Xunlong Orange Pi R1 Plus";
- 	compatible = "xunlong,orangepi-r1-plus", "rockchip,rk3328";
-+
-+	keys {
-+		autorepeat;
-+
-+		reset {
-+			linux,input-type = <1>;
-+			debounce-interval = <100>;
-+		};
-+	};
- };
- 
- &lan_led {
-@@ -12,7 +21,7 @@
+--- a/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus.dts
+@@ -12,7 +12,7 @@
  
  &spi0 {
  	max-freq = <48000000>;
@@ -73,106 +45,14 @@ Index: b/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus.dts
  
  	flash@0 {
  		compatible = "jedec,spi-nor";
-@@ -31,9 +40,27 @@
- };
- 
- &uart1 {
--	status = "okay";
-+	status = "disabled";
-+};
-+
-+&uart2 {
-+	status = "disabled";
- };
- 
- &wan_led {
- 	label = "orangepi-r1-plus:green:wan";
- };
-+
-+&rk805 {
-+	interrupt-parent = <&gpio1>;
-+	interrupts = <RK_PD0 IRQ_TYPE_LEVEL_LOW>;
-+};
-+
-+&sdmmc {
-+	cap-mmc-highspeed;
-+	max-frequency = <150000000>;
-+};
-+
-+&i2c0 {
-+	status = "disabled";
-+};
 Index: b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
 ===================================================================
---- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi	2023-03-16 11:51:41.876313531 +0800
-+++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi	2023-03-16 12:13:26.240655822 +0800
-@@ -109,50 +109,63 @@
- 		compatible = "operating-points-v2";
- 		opp-shared;
- 
-+		rockchip,video-4k-freq = <1008000>;
-+
-+		rockchip,leakage-voltage-sel = <
-+			1   10    0
-+			11  254   1
-+		>;
-+		nvmem-cells = <&cpu_leakage>;
-+		nvmem-cell-names = "cpu_leakage";
-+
- 		opp-408000000 {
- 			opp-hz = /bits/ 64 <408000000>;
--			opp-microvolt = <950000>;
-+			opp-microvolt = <950000 950000 1350000>;
-+			opp-microvolt-L0 = <950000 950000 1350000>;
-+			opp-microvolt-L1 = <950000 950000 1350000>;
- 			clock-latency-ns = <40000>;
- 			opp-suspend;
- 		};
- 		opp-600000000 {
- 			opp-hz = /bits/ 64 <600000000>;
--			opp-microvolt = <950000>;
-+			opp-microvolt = <950000 950000 1350000>;
-+			opp-microvolt-L0 = <950000 950000 1350000>;
-+			opp-microvolt-L1 = <950000 950000 1350000>;
+--- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+@@ -145,16 +145,6 @@
+ 			opp-microvolt = <1350000>;
  			clock-latency-ns = <40000>;
  		};
- 		opp-816000000 {
- 			opp-hz = /bits/ 64 <816000000>;
--			opp-microvolt = <1000000>;
-+			opp-microvolt = <1050000 1050000 1350000>;
-+			opp-microvolt-L0 = <1050000 1050000 1350000>;
-+			opp-microvolt-L1 = <1000000 1000000 1350000>;
- 			clock-latency-ns = <40000>;
- 		};
- 		opp-1008000000 {
- 			opp-hz = /bits/ 64 <1008000000>;
--			opp-microvolt = <1100000>;
-+			opp-microvolt = <1150000 1150000 1350000>;
-+			opp-microvolt-L0 = <1150000 1150000 1350000>;
-+			opp-microvolt-L1 = <1100000 1100000 1350000>;
- 			clock-latency-ns = <40000>;
- 		};
- 		opp-1200000000 {
- 			opp-hz = /bits/ 64 <1200000000>;
--			opp-microvolt = <1225000>;
-+			opp-microvolt = <1275000 1275000 1350000>;
-+			opp-microvolt-L0 = <1275000 1275000 1350000>;
-+			opp-microvolt-L1 = <1225000 1225000 1350000>;
- 			clock-latency-ns = <40000>;
- 		};
- 		opp-1296000000 {
- 			opp-hz = /bits/ 64 <1296000000>;
--			opp-microvolt = <1300000>;
-+			opp-microvolt = <1350000 1350000 1350000>;
-+			opp-microvolt-L0 = <1350000 1350000 1350000>;
-+			opp-microvolt-L1 = <1300000 1300000 1350000>;
- 			clock-latency-ns = <40000>;
- 		};
- 		opp-1392000000 {
- 			opp-hz = /bits/ 64 <1392000000>;
--			opp-microvolt = <1350000>;
--			clock-latency-ns = <40000>;
--		};
 -		opp-1512000000 {
 -			opp-hz = /bits/ 64 <1512000000>;
 -			opp-microvolt = <1450000>;
@@ -181,13 +61,12 @@ Index: b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
 -		opp-1608000000 {
 -			opp-hz = /bits/ 64 <1608000000>;
 -			opp-microvolt = <1450000>;
-+			opp-microvolt = <1400000 1400000 1450000>;
-+			opp-microvolt-L0 = <1400000 1400000 1450000>;
-+			opp-microvolt-L1 = <1380000 1380000 1450000>;
- 			clock-latency-ns = <40000>;
- 		};
+-			clock-latency-ns = <40000>;
+-		};
  	};
-@@ -848,6 +861,47 @@
+ 
+ 	amba {
+@@ -848,6 +838,47 @@
  		};
  	};
  
@@ -235,7 +114,7 @@ Index: b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
  	sdmmc: dwmmc@ff500000 {
  		compatible = "rockchip,rk3328-dw-mshc", "rockchip,rk3288-dw-mshc";
  		reg = <0x0 0xff500000 0x0 0x4000>;
-@@ -997,6 +1051,8 @@
+@@ -997,6 +1028,8 @@
  			reg = <0x0 0xff600000 0x0 0x100000>;
  			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
  			dr_mode = "otg";
@@ -246,8 +125,8 @@ Index: b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
  			snps,dis-u2-freeclk-exists-quirk;
 Index: b/drivers/phy/rockchip/Kconfig
 ===================================================================
---- a/drivers/phy/rockchip/Kconfig	2023-03-13 17:18:25.000000000 +0800
-+++ b/drivers/phy/rockchip/Kconfig	2023-03-16 12:15:45.514478018 +0800
+--- a/drivers/phy/rockchip/Kconfig
++++ b/drivers/phy/rockchip/Kconfig
 @@ -35,6 +35,15 @@ config PHY_ROCKCHIP_INNO_USB2
  	help
  	  Support for Rockchip USB2.0 PHY with Innosilicon IP block.
@@ -266,8 +145,8 @@ Index: b/drivers/phy/rockchip/Kconfig
  	depends on (ARCH_ROCKCHIP && OF) || COMPILE_TEST
 Index: b/drivers/phy/rockchip/Makefile
 ===================================================================
---- a/drivers/phy/rockchip/Makefile	2023-03-13 17:18:25.000000000 +0800
-+++ b/drivers/phy/rockchip/Makefile	2023-03-16 12:16:34.765760089 +0800
+--- a/drivers/phy/rockchip/Makefile
++++ b/drivers/phy/rockchip/Makefile
 @@ -3,6 +3,7 @@ obj-$(CONFIG_PHY_ROCKCHIP_DP)		+= phy-ro
  obj-$(CONFIG_PHY_ROCKCHIP_EMMC)		+= phy-rockchip-emmc.o
  obj-$(CONFIG_PHY_ROCKCHIP_INNO_HDMI)	+= phy-rockchip-inno-hdmi.o

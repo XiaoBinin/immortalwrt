@@ -13,7 +13,7 @@
 +		pcie-eth@0,0 {
 +			compatible = "pci10ec,8168";
 +			reg = <0x000000 0 0 0 0>;
-+
++			local-mac-address = [ 00 00 00 00 00 00 ];
 +			realtek,led-data = <0x870>;
 +		};
 +	};
