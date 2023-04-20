@@ -1,7 +1,7 @@
 Index: b/Documentation/devicetree/bindings/soc/rockchip/grf.txt
 ===================================================================
---- a/Documentation/devicetree/bindings/soc/rockchip/grf.txt
-+++ b/Documentation/devicetree/bindings/soc/rockchip/grf.txt
+--- a/Documentation/devicetree/bindings/soc/rockchip/grf.txt	2023-04-20 17:43:29.528949314 +0800
++++ b/Documentation/devicetree/bindings/soc/rockchip/grf.txt	2023-04-20 17:43:29.524949265 +0800
 @@ -31,6 +31,8 @@ Required Properties:
     - "rockchip,rk3288-sgrf", "syscon": for rk3288
  - compatible: USB2PHYGRF should be one of the followings
@@ -13,9 +13,33 @@ Index: b/Documentation/devicetree/bindings/soc/rockchip/grf.txt
  - reg: physical base address of the controller and length of memory mapped
 Index: b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s.dts
 ===================================================================
---- a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s.dts
-@@ -486,3 +486,16 @@
+--- a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s.dts	2023-04-20 17:43:29.528949314 +0800
++++ b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s.dts	2023-04-20 17:44:18.389522235 +0800
+@@ -216,6 +216,7 @@
+ 	rx_delay = <0x18>;
+ 	snps,aal;
+ 	tx_delay = <0x24>;
++	handle_cpu_id = <1>;
+ 	status = "okay";
+ 
+ 	mdio {
+@@ -478,11 +479,31 @@
+ &usbdrd_dwc3 {
+ 	dr_mode = "host";
+ 	status = "okay";
++	handle_cpu_id = <2>;
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	snps,dis-tx-ipgap-linecheck-quirk;
++	snps,xhci-slow-suspend-quirk;
++	snps,xhci-trb-ent-quirk;
+ 
+ 	usb_eth: usb-eth@2 {
+ 		compatible = "realtek,rtl8153";
+ 		reg = <2>;
+-
++		local-mac-address = [00 00 00 00 00 00];
  		realtek,led-data = <0x87>;
  	};
  };
@@ -34,8 +58,8 @@ Index: b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s.dts
 +};
 Index: b/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus.dts
 ===================================================================
---- a/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus.dts
+--- a/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus.dts	2023-04-20 17:43:29.528949314 +0800
++++ b/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus.dts	2023-04-20 17:43:29.524949265 +0800
 @@ -12,7 +12,7 @@
  
  &spi0 {
@@ -47,8 +71,8 @@ Index: b/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus.dts
  		compatible = "jedec,spi-nor";
 Index: b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
 ===================================================================
---- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
+--- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi	2023-04-20 17:43:29.528949314 +0800
++++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi	2023-04-20 17:43:29.524949265 +0800
 @@ -145,16 +145,6 @@
  			opp-microvolt = <1350000>;
  			clock-latency-ns = <40000>;
@@ -66,6 +90,24 @@ Index: b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
  	};
  
  	amba {
+@@ -787,7 +777,7 @@
+ 			<&cru ACLK_BUS_PRE>, <&cru HCLK_BUS_PRE>,
+ 			<&cru PCLK_BUS_PRE>, <&cru ACLK_PERI_PRE>,
+ 			<&cru HCLK_PERI>, <&cru PCLK_PERI>,
+-			<&cru SCLK_RTC32K>;
++			<&cru SCLK_RTC32K>, <&cru SCLK_USB3OTG_SUSPEND>;
+ 		assigned-clock-parents =
+ 			<&cru HDMIPHY>, <&cru PLL_APLL>,
+ 			<&cru PLL_GPLL>, <&xin24m>,
+@@ -808,7 +798,7 @@
+ 			<150000000>, <75000000>,
+ 			<75000000>, <150000000>,
+ 			<75000000>, <75000000>,
+-			<32768>;
++			<32768>, <32768>;
+ 	};
+ 
+ 	usb2phy_grf: syscon@ff450000 {
 @@ -848,6 +838,47 @@
  		};
  	};
@@ -114,7 +156,7 @@ Index: b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
  	sdmmc: dwmmc@ff500000 {
  		compatible = "rockchip,rk3328-dw-mshc", "rockchip,rk3288-dw-mshc";
  		reg = <0x0 0xff500000 0x0 0x4000>;
-@@ -997,6 +1028,8 @@
+@@ -997,13 +1028,15 @@
  			reg = <0x0 0xff600000 0x0 0x100000>;
  			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
  			dr_mode = "otg";
@@ -123,10 +165,18 @@ Index: b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
  			phy_type = "utmi_wide";
  			snps,dis_enblslpm_quirk;
  			snps,dis-u2-freeclk-exists-quirk;
+ 			snps,dis_u2_susphy_quirk;
++			snps,dis-u3-autosuspend-quirk;
+ 			snps,dis_u3_susphy_quirk;
+ 			snps,dis-del-phy-power-chg-quirk;
+-			snps,dis-tx-ipgap-linecheck-quirk;
+ 			status = "disabled";
+ 		};
+ 	};
 Index: b/drivers/phy/rockchip/Kconfig
 ===================================================================
---- a/drivers/phy/rockchip/Kconfig
-+++ b/drivers/phy/rockchip/Kconfig
+--- a/drivers/phy/rockchip/Kconfig	2023-04-20 17:43:29.528949314 +0800
++++ b/drivers/phy/rockchip/Kconfig	2023-04-20 17:43:29.524949265 +0800
 @@ -35,6 +35,15 @@ config PHY_ROCKCHIP_INNO_USB2
  	help
  	  Support for Rockchip USB2.0 PHY with Innosilicon IP block.
@@ -145,8 +195,8 @@ Index: b/drivers/phy/rockchip/Kconfig
  	depends on (ARCH_ROCKCHIP && OF) || COMPILE_TEST
 Index: b/drivers/phy/rockchip/Makefile
 ===================================================================
---- a/drivers/phy/rockchip/Makefile
-+++ b/drivers/phy/rockchip/Makefile
+--- a/drivers/phy/rockchip/Makefile	2023-04-20 17:43:29.528949314 +0800
++++ b/drivers/phy/rockchip/Makefile	2023-04-20 17:43:29.524949265 +0800
 @@ -3,6 +3,7 @@ obj-$(CONFIG_PHY_ROCKCHIP_DP)		+= phy-ro
  obj-$(CONFIG_PHY_ROCKCHIP_EMMC)		+= phy-rockchip-emmc.o
  obj-$(CONFIG_PHY_ROCKCHIP_INNO_HDMI)	+= phy-rockchip-inno-hdmi.o
