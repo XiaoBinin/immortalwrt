@@ -56,7 +56,7 @@ Index: b/drivers/usb/dwc3/host.c
  		props[prop_idx++] = PROPERTY_ENTRY_BOOL("usb2-lpm-disable");
  
 +	if (dwc->xhci_slow_suspend_quirk)
-+		props[prop_idx++].name = "xhci-slow-suspend";
++		props[prop_idx++] = PROPERTY_ENTRY_BOOL("xhci-slow-suspend");
 +
  	/**
  	 * WORKAROUND: dwc3 revisions <=3.00a have a limitation

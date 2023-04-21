@@ -62,7 +62,7 @@ Index: b/drivers/usb/dwc3/host.c
  	memset(props, 0, sizeof(struct property_entry) * ARRAY_SIZE(props));
  
 +	if (dwc->dis_u3_autosuspend_quirk)
-+		props[prop_idx++].name = "usb3-dis-autosuspend";
++		props[prop_idx++] = PROPERTY_ENTRY_BOOL("usb3-dis-autosuspend");
 +
  	if (dwc->usb3_lpm_capable)
  		props[prop_idx++] = PROPERTY_ENTRY_BOOL("usb3-lpm-capable");
