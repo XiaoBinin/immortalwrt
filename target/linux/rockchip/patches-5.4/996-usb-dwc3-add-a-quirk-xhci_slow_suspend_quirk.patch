@@ -1,7 +1,7 @@
 Index: b/Documentation/devicetree/bindings/usb/dwc3.txt
 ===================================================================
---- a/Documentation/devicetree/bindings/usb/dwc3.txt	2023-04-21 20:45:18.871002155 +0800
-+++ b/Documentation/devicetree/bindings/usb/dwc3.txt	2023-04-21 20:45:18.859001631 +0800
+--- a/Documentation/devicetree/bindings/usb/dwc3.txt
++++ b/Documentation/devicetree/bindings/usb/dwc3.txt
 @@ -79,6 +79,9 @@ Optional properties:
  			park mode are disabled.
   - snps,dis_metastability_quirk: when set, disable metastability workaround.
@@ -14,8 +14,8 @@ Index: b/Documentation/devicetree/bindings/usb/dwc3.txt
   - snps,hird-threshold: HIRD threshold
 Index: b/drivers/usb/dwc3/core.c
 ===================================================================
---- a/drivers/usb/dwc3/core.c	2023-04-21 20:45:18.871002155 +0800
-+++ b/drivers/usb/dwc3/core.c	2023-04-21 20:45:18.859001631 +0800
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
 @@ -1318,6 +1318,8 @@ static void dwc3_get_properties(struct d
  				"snps,dis-u2-freeclk-exists-quirk");
  	dwc->dis_del_phy_power_chg_quirk = device_property_read_bool(dev,
@@ -27,8 +27,8 @@ Index: b/drivers/usb/dwc3/core.c
  	dwc->parkmode_disable_ss_quirk = device_property_read_bool(dev,
 Index: b/drivers/usb/dwc3/core.h
 ===================================================================
---- a/drivers/usb/dwc3/core.h	2023-04-21 20:45:18.871002155 +0800
-+++ b/drivers/usb/dwc3/core.h	2023-04-21 20:45:18.863001806 +0800
+--- a/drivers/usb/dwc3/core.h
++++ b/drivers/usb/dwc3/core.h
 @@ -1034,6 +1034,9 @@ struct dwc3_scratchpad_array {
   *			provide a free-running PHY clock.
   * @dis_del_phy_power_chg_quirk: set if we disable delay phy power
@@ -49,8 +49,8 @@ Index: b/drivers/usb/dwc3/core.h
  
 Index: b/drivers/usb/dwc3/host.c
 ===================================================================
---- a/drivers/usb/dwc3/host.c	2023-04-21 20:45:18.871002155 +0800
-+++ b/drivers/usb/dwc3/host.c	2023-04-21 20:45:18.863001806 +0800
+--- a/drivers/usb/dwc3/host.c
++++ b/drivers/usb/dwc3/host.c
 @@ -93,6 +93,9 @@ int dwc3_host_init(struct dwc3 *dwc)
  	if (dwc->usb2_lpm_disable)
  		props[prop_idx++] = PROPERTY_ENTRY_BOOL("usb2-lpm-disable");
@@ -63,8 +63,8 @@ Index: b/drivers/usb/dwc3/host.c
  	 * where Port Disable command doesn't work.
 Index: b/drivers/usb/host/xhci-plat.c
 ===================================================================
---- a/drivers/usb/host/xhci-plat.c	2023-03-13 17:18:25.000000000 +0800
-+++ b/drivers/usb/host/xhci-plat.c	2023-04-21 20:46:14.365333523 +0800
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
 @@ -301,6 +301,9 @@ static int xhci_plat_probe(struct platfo
  		if (device_property_read_bool(tmpdev, "quirk-broken-port-ped"))
  			xhci->quirks |= XHCI_BROKEN_PORT_PED;

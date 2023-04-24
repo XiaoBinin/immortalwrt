@@ -1,7 +1,7 @@
 Index: b/Documentation/devicetree/bindings/usb/dwc3.txt
 ===================================================================
---- a/Documentation/devicetree/bindings/usb/dwc3.txt	2023-04-21 17:35:24.592244688 +0800
-+++ b/Documentation/devicetree/bindings/usb/dwc3.txt	2023-04-21 17:35:24.588244902 +0800
+--- a/Documentation/devicetree/bindings/usb/dwc3.txt
++++ b/Documentation/devicetree/bindings/usb/dwc3.txt
 @@ -60,6 +60,8 @@ Optional properties:
   - snps,tx_de_emphasis_quirk: when set core will set Tx de-emphasis value.
   - snps,tx_de_emphasis: the value driven to the PHY is controlled by the
@@ -13,8 +13,8 @@ Index: b/Documentation/devicetree/bindings/usb/dwc3.txt
   - snps,dis_enblslpm_quirk: when set clears the enblslpm in GUSB2PHYCFG,
 Index: b/drivers/usb/dwc3/core.c
 ===================================================================
---- a/drivers/usb/dwc3/core.c	2023-04-21 17:35:24.592244688 +0800
-+++ b/drivers/usb/dwc3/core.c	2023-04-21 17:35:24.588244902 +0800
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
 @@ -1302,6 +1302,8 @@ static void dwc3_get_properties(struct d
  				"snps,lfps_filter_quirk");
  	dwc->rx_detect_poll_quirk = device_property_read_bool(dev,
@@ -26,8 +26,8 @@ Index: b/drivers/usb/dwc3/core.c
  	dwc->dis_u2_susphy_quirk = device_property_read_bool(dev,
 Index: b/drivers/usb/dwc3/core.h
 ===================================================================
---- a/drivers/usb/dwc3/core.h	2023-04-21 17:35:24.592244688 +0800
-+++ b/drivers/usb/dwc3/core.h	2023-04-21 17:35:24.588244902 +0800
+--- a/drivers/usb/dwc3/core.h
++++ b/drivers/usb/dwc3/core.h
 @@ -1022,6 +1022,7 @@ struct dwc3_scratchpad_array {
   * @del_phy_power_chg_quirk: set if we enable delay phy power change quirk
   * @lfps_filter_quirk: set if we enable LFPS filter quirk
@@ -46,8 +46,8 @@ Index: b/drivers/usb/dwc3/core.h
  	unsigned		dis_enblslpm_quirk:1;
 Index: b/drivers/usb/dwc3/host.c
 ===================================================================
---- a/drivers/usb/dwc3/host.c	2023-04-21 17:35:24.592244688 +0800
-+++ b/drivers/usb/dwc3/host.c	2023-04-21 17:41:01.207084507 +0800
+--- a/drivers/usb/dwc3/host.c
++++ b/drivers/usb/dwc3/host.c
 @@ -43,7 +43,7 @@ out:
  
  int dwc3_host_init(struct dwc3 *dwc)
@@ -69,8 +69,8 @@ Index: b/drivers/usb/dwc3/host.c
  
 Index: b/Documentation/devicetree/bindings/usb/usb-xhci.txt
 ===================================================================
---- a/Documentation/devicetree/bindings/usb/usb-xhci.txt	2023-04-21 17:35:24.592244688 +0800
-+++ b/Documentation/devicetree/bindings/usb/usb-xhci.txt	2023-04-21 17:35:24.588244902 +0800
+--- a/Documentation/devicetree/bindings/usb/usb-xhci.txt
++++ b/Documentation/devicetree/bindings/usb/usb-xhci.txt
 @@ -39,6 +39,7 @@ Optional properties:
      second one
    - usb2-lpm-disable: indicate if we don't want to enable USB2 HW LPM
@@ -81,8 +81,8 @@ Index: b/Documentation/devicetree/bindings/usb/usb-xhci.txt
    - phys : see usb-hcd.yaml in the current directory
 Index: b/drivers/usb/core/hub.c
 ===================================================================
---- a/drivers/usb/core/hub.c	2023-04-21 17:35:24.592244688 +0800
-+++ b/drivers/usb/core/hub.c	2023-04-21 17:35:24.588244902 +0800
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
 @@ -1831,7 +1831,8 @@ static int hub_probe(struct usb_interfac
  	 * bus_resume methods.
  	 */
@@ -121,8 +121,8 @@ Index: b/drivers/usb/core/hub.c
  			connect_change = 0;
 Index: b/drivers/usb/host/xhci-plat.c
 ===================================================================
---- a/drivers/usb/host/xhci-plat.c	2023-04-21 17:35:24.592244688 +0800
-+++ b/drivers/usb/host/xhci-plat.c	2023-04-21 17:35:24.588244902 +0800
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
 @@ -304,6 +304,9 @@ static int xhci_plat_probe(struct platfo
  		if (device_property_read_bool(tmpdev, "xhci-slow-suspend"))
  			xhci->quirks |= XHCI_SLOW_SUSPEND;
@@ -135,8 +135,8 @@ Index: b/drivers/usb/host/xhci-plat.c
  	}
 Index: b/drivers/usb/host/xhci.c
 ===================================================================
---- a/drivers/usb/host/xhci.c	2023-04-21 17:35:24.592244688 +0800
-+++ b/drivers/usb/host/xhci.c	2023-04-21 17:35:24.588244902 +0800
+--- a/drivers/usb/host/xhci.c
++++ b/drivers/usb/host/xhci.c
 @@ -17,6 +17,7 @@
  #include <linux/slab.h>
  #include <linux/dmi.h>
@@ -157,8 +157,8 @@ Index: b/drivers/usb/host/xhci.c
  
 Index: b/drivers/usb/host/xhci.h
 ===================================================================
---- a/drivers/usb/host/xhci.h	2023-04-21 17:35:24.592244688 +0800
-+++ b/drivers/usb/host/xhci.h	2023-04-21 17:35:24.592244688 +0800
+--- a/drivers/usb/host/xhci.h
++++ b/drivers/usb/host/xhci.h
 @@ -1884,6 +1884,7 @@ struct xhci_hcd {
  #define XHCI_SKIP_PHY_INIT	BIT_ULL(37)
  #define XHCI_DISABLE_SPARSE	BIT_ULL(38)
@@ -169,8 +169,8 @@ Index: b/drivers/usb/host/xhci.h
  	unsigned int		limit_active_eps;
 Index: b/include/linux/usb/quirks.h
 ===================================================================
---- a/include/linux/usb/quirks.h	2023-04-21 17:35:24.592244688 +0800
-+++ b/include/linux/usb/quirks.h	2023-04-21 17:35:24.592244688 +0800
+--- a/include/linux/usb/quirks.h
++++ b/include/linux/usb/quirks.h
 @@ -72,4 +72,7 @@
  /* device has blacklisted endpoints */
  #define USB_QUIRK_ENDPOINT_BLACKLIST		BIT(15)

@@ -1,9 +1,9 @@
 Index: b/drivers/usb/dwc3/core.c
 ===================================================================
---- a/drivers/usb/dwc3/core.c	2023-04-21 15:58:59.285970829 +0800
-+++ b/drivers/usb/dwc3/core.c	2023-04-21 16:07:01.307305728 +0800
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
 @@ -1324,6 +1324,8 @@ static void dwc3_get_properties(struct d
- 				"snps,xhci_slow_suspend_quirk");
+ 				"snps,xhci-slow-suspend-quirk");
  	dwc->dis_tx_ipgap_linecheck_quirk = device_property_read_bool(dev,
  				"snps,dis-tx-ipgap-linecheck-quirk");
 +	dwc->xhci_trb_ent_quirk = device_property_read_bool(dev,
@@ -13,8 +13,8 @@ Index: b/drivers/usb/dwc3/core.c
  
 Index: b/drivers/usb/dwc3/core.h
 ===================================================================
---- a/drivers/usb/dwc3/core.h	2023-04-21 16:00:27.442897010 +0800
-+++ b/drivers/usb/dwc3/core.h	2023-04-21 16:07:54.791928482 +0800
+--- a/drivers/usb/dwc3/core.h
++++ b/drivers/usb/dwc3/core.h
 @@ -1040,6 +1040,9 @@ struct dwc3_scratchpad_array {
   *			(R/S) bit is cleared to '0'.
   * @dis_tx_ipgap_linecheck_quirk: set if we disable u2mac linestate
@@ -35,8 +35,8 @@ Index: b/drivers/usb/dwc3/core.h
  	unsigned		tx_de_emphasis_quirk:1;
 Index: b/drivers/usb/dwc3/host.c
 ===================================================================
---- a/drivers/usb/dwc3/host.c	2023-04-21 16:03:37.448978116 +0800
-+++ b/drivers/usb/dwc3/host.c	2023-04-21 16:08:56.924656996 +0800
+--- a/drivers/usb/dwc3/host.c
++++ b/drivers/usb/dwc3/host.c
 @@ -43,7 +43,7 @@ out:
  
  int dwc3_host_init(struct dwc3 *dwc)
@@ -58,11 +58,11 @@ Index: b/drivers/usb/dwc3/host.c
  
 Index: b/drivers/usb/host/xhci-plat.c
 ===================================================================
---- a/drivers/usb/host/xhci-plat.c	2023-03-13 17:18:25.000000000 +0800
-+++ b/drivers/usb/host/xhci-plat.c	2023-04-21 16:09:31.005058703 +0800
-@@ -301,6 +301,9 @@ static int xhci_plat_probe(struct platfo
- 		if (device_property_read_bool(tmpdev, "quirk-broken-port-ped"))
- 			xhci->quirks |= XHCI_BROKEN_PORT_PED;
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -307,6 +307,9 @@ static int xhci_plat_probe(struct platfo
+ 		if (device_property_read_bool(tmpdev, "usb3-dis-autosuspend"))
+ 			xhci->quirks |= XHCI_DIS_AUTOSUSPEND;
  
 +		if (device_property_read_bool(tmpdev, "xhci-trb-ent-quirk"))
 +			xhci->quirks |= XHCI_TRB_ENT_QUIRK;
@@ -72,8 +72,8 @@ Index: b/drivers/usb/host/xhci-plat.c
  	}
 Index: b/drivers/usb/host/xhci-ring.c
 ===================================================================
---- a/drivers/usb/host/xhci-ring.c	2023-03-13 17:18:25.000000000 +0800
-+++ b/drivers/usb/host/xhci-ring.c	2023-04-21 16:12:00.070830773 +0800
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
 @@ -3361,6 +3361,7 @@ int xhci_queue_bulk_tx(struct xhci_hcd *
  	bool more_trbs_coming = true;
  	bool need_zero_pkt = false;
@@ -121,8 +121,8 @@ Index: b/drivers/usb/host/xhci-ring.c
  						  &trb_buff_len,
 Index: b/drivers/usb/host/xhci.h
 ===================================================================
---- a/drivers/usb/host/xhci.h	2023-03-13 17:18:25.000000000 +0800
-+++ b/drivers/usb/host/xhci.h	2023-04-21 16:18:37.031632876 +0800
+--- a/drivers/usb/host/xhci.h
++++ b/drivers/usb/host/xhci.h
 @@ -1519,7 +1519,11 @@ static inline const char *xhci_trb_type_
  #define TRB_SEGMENT_SIZE	(TRBS_PER_SEGMENT*16)
  #define TRB_SEGMENT_SHIFT	(ilog2(TRB_SEGMENT_SIZE))
